@@ -30,7 +30,8 @@
       <% if show_project_progress %>
         <th><%= l(:field_versions)%></th>
       <% end %>
-      <th><%= l(:field_created_on)%></th>
+      <th><%= l(:field_updated_on)%></th>
+      <th>Work status</th>
     </tr>
   </thead>
   <tbody>
@@ -54,8 +55,17 @@
         <% if show_project_progress %>
           <td><%= render_project_progress(project) %></td>
         <% end %>
-        <td align="center"><%= format_date(project.created_on) %></td>
-      </tr>
+         <td align="center"><%= format_date(project.updated_on) %></td>
+	 <% project.custom_values.each do |custom_value| %>
+	    <% if custom_value.custom_field.name == "Work status" %>
+               <% if custom_value.value.to_s == "New" %>
+                  <td align="center">&nbsp;</td>
+	        <% else %>
+                  <td align="center"><%= custom_value.value.to_s %></td>
+                <% end %>
+	    <% end %>
+         <% end %>
+        </tr>
       <% ancestors << project_id if has_children %>
       <% plevel = level %>
     <% end %>
