@@ -23,6 +23,7 @@
   <thead>
     <tr>
       <th><%= l(:label_project)%></th>
+      <th>Work status</th>    
       <th><%= l(:field_description)%></th>
       <% if show_field_go_to %>
         <th><%= l(:field_go_to)%></th>
@@ -31,7 +32,6 @@
         <th><%= l(:field_versions)%></th>
       <% end %>
       <th><%= l(:field_updated_on)%></th>
-      <th>Work status</th>
     </tr>
   </thead>
   <tbody>
@@ -48,6 +48,15 @@
           <% end %>
           <%= project.active? ? link_to_project(project, {:action => 'show'}) : h(project.name) %>
           <span class="empty <%= "my-project" if User.current.member_of?(project) %>">&nbsp;</span></td>
+        <% project.custom_values.each do |custom_value| %>
+	  <% if custom_value.custom_field.name == "Work status" %>
+            <% if custom_value.value.to_s == "New" %>
+              <td align="center">&nbsp;</td>
+	    <% else %>           
+              <td align="center"><%= custom_value.value.to_s %></td>
+            <% end %>
+	  <% end %>
+        <% end %>
         <td><%= textilizable project.short_description.gsub(/\!.+\!/,""), :project => project %></td>
         <% if show_field_go_to %>
           <td><%= favorite_project_modules_links(project) %></td>
@@ -55,16 +64,7 @@
         <% if show_project_progress %>
           <td><%= render_project_progress(project) %></td>
         <% end %>
-         <td align="center"><%= format_date(project.updated_on) %></td>
-	 <% project.custom_values.each do |custom_value| %>
-	    <% if custom_value.custom_field.name == "Work status" %>
-               <% if custom_value.value.to_s == "New" %>
-                  <td align="center">&nbsp;</td>
-	        <% else %>
-                  <td align="center"><%= custom_value.value.to_s %></td>
-                <% end %>
-	    <% end %>
-         <% end %>
+         <td align="center"><%= format_date(project.updated_on) %></td> 
         </tr>
       <% ancestors << project_id if has_children %>
       <% plevel = level %>
